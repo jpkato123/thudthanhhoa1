@@ -5,7 +5,7 @@ import { FaMoon } from "react-icons/fa";
 
 export default function Header() {
   const path = useLocation().pathname;
-  console.log(path);
+  // console.log(path);
   return (
     <Navbar fluid rounded className="border-b-2 shadow-sm">
       <Link
@@ -34,19 +34,19 @@ export default function Header() {
           <FaMoon />
         </Button>
         <Link to={"/sign-in"}>
-          <Button pill gradientDuoTone={"purpleToBlue"} outline>Sign In</Button>
+          <Button pill gradientDuoTone={"purpleToBlue"} outline>Đăng Nhập</Button>
         </Link>
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
         <Navbar.Link active={path === "/"} as={"div"}>
-          <Link to={"/"}>Home</Link>
+          <Link to={"/"}>Trang Chủ</Link>
         </Navbar.Link>
         <Navbar.Link active={path === "/about"} as={"div"}>
-          <Link to={"/about"}>About</Link>
+          <Link to={"/about"}>Giới Thiệu</Link>
         </Navbar.Link>
         <Navbar.Link active={path === "/projects"} as={"div"}>
-          <Link to={"/projects"}>Projects</Link>
+          <Link to={"/projects"}>Dự Án</Link>
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
