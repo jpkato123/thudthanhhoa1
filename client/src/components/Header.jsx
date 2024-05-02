@@ -30,11 +30,11 @@ export default function Header() {
         <AiOutlineSearch className="h-5 w-5 self-center" />
       </Button>
       <div className="flex justify-center items-center gap-1 md:order-2">
-        <Button color={"gray"} pill>
+        <Button color={"gray"} pill className=" hidden md:inline">
           <FaMoon />
         </Button>
         <Link to={"/sign-in"}>
-          <Button pill gradientDuoTone={"purpleToBlue"} outline>Đăng Nhập</Button>
+          <Button size={'sm'} pill gradientDuoTone={"purpleToBlue"} outline>Đăng Nhập</Button>
         </Link>
         <Navbar.Toggle />
       </div>
