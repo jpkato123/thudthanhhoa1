@@ -1,25 +1,36 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, Button, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+
 export default function SignIn() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
+  // const [loading, setLoading] = useState(false);
+  // const [errorMessage, setErrorMessage] = useState(null);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const handlechange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
   const handleSubmit = async (e) => {
     e.preventDefault(); // khi submit thi khong refresh lai page
-    if (
-      !formData.email === "" ||
-      !formData.password === ""
-    ) {
-      return setErrorMessage("Xin hãy nhập tất cả các thông tin đăng ký .");
+    if (!formData.email === "" || !formData.password === "") {
+      // return setErrorMessage("Xin hãy nhập tất cả các thông tin đăng ký .");
+      return dispatch(
+        signInFailure("Xin hãy nhập tất cả các thông tin đăng ký .")
+      );
     }
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      // setLoading(true);
+      // setErrorMessage(null);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -27,16 +38,17 @@ export default function SignIn() {
       });
       const data = await res.json();
       if (data.success === false) {
-        return setErrorMessage(data.message);
+        // return setErrorMessage(data.message);
+        return dispatch(signInFailure(data.message));
       }
-      setErrorMessage(null);
-      setLoading(false);
       if (res.ok) {
+        dispatch(signInSuccess(data));
         navigate("/");
       }
     } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+      // setErrorMessage(error.message);
+      // setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
   // console.log(formData)
@@ -64,7 +76,6 @@ export default function SignIn() {
         {/* right side */}
         <div className="flex-1">
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          
             <div className="">
               <Label value="Email Đăng Nhập"></Label>
               <TextInput
@@ -72,6 +83,7 @@ export default function SignIn() {
                 placeholder="name@company.com"
                 id="email"
                 onChange={handlechange}
+                required
               />
             </div>
             <div className="">
@@ -81,6 +93,7 @@ export default function SignIn() {
                 placeholder="*******"
                 id="password"
                 onChange={handlechange}
+                required
               />
             </div>
             <Button

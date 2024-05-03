@@ -60,15 +60,15 @@ export default function SignUp() {
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div className="">
               <Label value='Tên Đăng Nhập'></Label>
-              <TextInput type='text' placeholder='Username' id='username' onChange={handlechange}/>
+              <TextInput type='text' placeholder='Username' id='username' onChange={handlechange} required/>
             </div>
             <div className="">
               <Label value='Email Đăng Nhập'></Label>
-              <TextInput type='email' placeholder='name@company.com' id='email' onChange={handlechange}/>
+              <TextInput type='email' placeholder='name@company.com' id='email' onChange={handlechange} required/>
             </div>
             <div className="">
               <Label value='Mật Khẩu'></Label>
-              <TextInput type='password' placeholder='Password' id='password' onChange={handlechange}/>
+              <TextInput type='password' placeholder='Password' id='password' onChange={handlechange} required/>
             </div>
             <Button type='submit' isProcessing={loading} gradientDuoTone={'purpleToPink'} disabled={loading}>Đăng Ký</Button>
           </form>
