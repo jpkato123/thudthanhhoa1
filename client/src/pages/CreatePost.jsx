@@ -21,7 +21,7 @@ export default function CreatePost() {
                     Upload Image
                 </Button>
             </div>
-            <ReactQuill theme='snow' placeholder='Write somthing ...' className='h-72 mb-12' required/>
+            <ReactQuill id='content' theme='snow' placeholder='Write somthing ...' className='h-72 mb-12' required/>
             <Button type='submit' gradientDuoTone={'purpleToPink'}>
                 Tạo Bài Viết
             </Button>
