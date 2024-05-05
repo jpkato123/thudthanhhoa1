@@ -73,9 +73,9 @@ const handleSignOut = async () => {
             }
           >
             <Dropdown.Header>
-              <span className="block text-sm">{currentUser.username}</span>
+              <span className="block text-sm truncate" >@{currentUser.username}</span>
               <span className="block truncate text-sm">
-                @{currentUser.email}
+                {currentUser.email}
               </span>
             </Dropdown.Header>
             <Link to={"/dashboard?tab=profile"}>
