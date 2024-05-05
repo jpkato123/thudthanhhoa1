@@ -93,6 +93,7 @@ export default function DashProfile() {
   const handleSubmitForm = async (e) => {
     e.preventDefault();
     setUpdateUserError(null);
+    
     setUpdateUserSuccess(null)
     if (Object.keys(formData).length === 0) {
       setUpdateUserError("No changes made");
@@ -104,6 +105,7 @@ export default function DashProfile() {
     }
     try {
       dispatch(updateStart());
+      setUpdateUserError(null)
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -119,7 +121,7 @@ export default function DashProfile() {
         setUpdateUserSuccess("User profile updated successfully");
       }
     } catch (error) {
-      dispatch(updateFailure(error.message));
+      // dispatch(updateFailure(error.message));
       setUpdateUserError(error.message);
     }
   };
