@@ -51,7 +51,7 @@ export default function DashUsers() {
     setShowModal(false);
     try {
       const res = await fetch(
-        `/api/user/deleteuser/${userIdToDelete}/${currentUser._id}`,
+        `/api/user/delete/${userIdToDelete}`,
         {
           method: "DELETE",
         }
@@ -61,6 +61,7 @@ export default function DashUsers() {
         console.log(data.message);
       } else {
         setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
+        // setShowModal(false)
       }
     } catch (error) {
       console.log(error.message);
