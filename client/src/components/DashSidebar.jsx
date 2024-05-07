@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiDocumentText, HiUser } from "react-icons/hi";
+import { HiDocumentText, HiUser, HiUserGroup } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -26,13 +26,13 @@ export default function DashSidebar() {
               as={"div"}
               active={tab === "profile"}
               icon={HiUser}
-              label={currentUser.isAdmin ? 'Admin':'User'}
+              label={currentUser.isAdmin ? "Admin" : "User"}
               labelColor={"dark"}
             >
               Profile
             </Sidebar.Item>
           </Link>
-          {currentUser && (
+          {currentUser.isAdmin && (
             <Link to={"/dashboard?tab=posts"}>
               <Sidebar.Item
                 as="div"
@@ -41,6 +41,18 @@ export default function DashSidebar() {
                 className="cursor-pointer"
               >
                 Posts
+              </Sidebar.Item>
+            </Link>
+          )}
+          {currentUser.isAdmin && (
+            <Link to={"/dashboard?tab=users"}>
+              <Sidebar.Item
+                as="div"
+                active={tab === "users"}
+                icon={HiUserGroup}
+                className="cursor-pointer"
+              >
+                Users
               </Sidebar.Item>
             </Link>
           )}
