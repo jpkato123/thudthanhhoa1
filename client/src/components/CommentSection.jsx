@@ -1,12 +1,15 @@
 import { Alert, Button, Textarea } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Comment from "./Comment";
 
 export default function CommentSection({ postId }) {
   const { currentUser } = useSelector((state) => state.user);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState("");//noi dung tu client de fetch du lieu di
   const [commentError, setCommentError] = useState(null)
+  const [comments, setComments] = useState([])// luu du lieu tu api gui ve
+  // console.log(comments);
   // console.log(comment);
   //   console.log(postId);
   const handleSubmit = async (e) => {
@@ -27,15 +30,33 @@ export default function CommentSection({ postId }) {
     if (res.ok) {
       setComment("");
       setCommentError(null)
+      setComments([data,...comments])
     }
     } catch (error) {
      setCommentError(error.message)
     }
   };
+  useEffect(()=>{
+    const getComments = async () =>{
+      try {
+        const res = await fetch(`/api/comment/getPostComments/${postId}`);
+        const data = await res.json();
+        if(res.ok) {
+          setComments(data)
+          
+        }else {
+          console.log(data.message)
+        }
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+    getComments()
+  },[postId])
   return (
     <div className="max-w-4xl mx-auto w-full p-3">
       {currentUser ? (
-        <div className="flex items-center gap-2 text-gray-500 text-sm">
+        <div className="flex items-center gap-2 text-gray-500 text-sm py-2">
           <p>Signed in as:</p>
           <img
             className="w-5 h-5 object-cover rounded-full"
@@ -67,6 +88,7 @@ export default function CommentSection({ postId }) {
             rows={"3"}
             maxLength={"200"}
             onChange={(e) => setComment(e.target.value)}
+            value={comment}
           />
           <div className="flex justify-between items-center mt-5">
             <p className="text-gray-500 text-xs">
@@ -76,10 +98,27 @@ export default function CommentSection({ postId }) {
               Submit
             </Button>
           </div>
-          {commentError && <Alert color={'failure'} className="mt-5">
-            {commentError}
-          </Alert>}
+          {commentError && (
+            <Alert color={"failure"} className="mt-5">
+              {commentError}
+            </Alert>
+          )}
         </form>
+      )}
+      {comments.length === 0 ? (
+        <p className="text-sm my-5">Chưa có comments nào</p>
+      ) : (
+        <>
+          <div className="flex items-center gap-2 text-sm my-5">
+            <p>Comments</p>
+            <div className="border border-gay-500 py-1 px-2 rounded-sm">
+              <p>{comments.length}</p>
+            </div>
+          </div>
+          {
+            comments.map(comment=>(<Comment key={comment._id} comment={comment}/>))
+          }
+        </>
       )}
     </div>
   );
