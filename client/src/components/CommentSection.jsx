@@ -1,14 +1,15 @@
 import { Alert, Button, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Comment from "./Comment";
 
 export default function CommentSection({ postId }) {
   const { currentUser } = useSelector((state) => state.user);
-  const [comment, setComment] = useState("");//noi dung tu client de fetch du lieu di
-  const [commentError, setCommentError] = useState(null)
-  const [comments, setComments] = useState([])// luu du lieu tu api gui ve
+  const [comment, setComment] = useState(""); //noi dung tu client de fetch du lieu di
+  const [commentError, setCommentError] = useState(null);
+  const [comments, setComments] = useState([]); // luu du lieu tu api gui ve
+  const navigate = useNavigate();
   // console.log(comments);
   // console.log(comment);
   //   console.log(postId);
@@ -16,43 +17,68 @@ export default function CommentSection({ postId }) {
     e.preventDefault();
     if (comment.length > 200) return;
     try {
-      
-    const res = await fetch(`/api/comment/create`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content: comment,
-        postId,
-        userId: currentUser._id,
-      }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setComment("");
-      setCommentError(null)
-      setComments([data,...comments])
-    }
+      const res = await fetch(`/api/comment/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: comment,
+          postId,
+          userId: currentUser._id,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setComment("");
+        setCommentError(null);
+        setComments([data, ...comments]);
+      }
     } catch (error) {
-     setCommentError(error.message)
+      setCommentError(error.message);
     }
   };
-  useEffect(()=>{
-    const getComments = async () =>{
+  useEffect(() => {
+    const getComments = async () => {
       try {
         const res = await fetch(`/api/comment/getPostComments/${postId}`);
         const data = await res.json();
-        if(res.ok) {
-          setComments(data)
-          
-        }else {
-          console.log(data.message)
+        if (res.ok) {
+          setComments(data);
+        } else {
+          console.log(data.message);
         }
       } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
       }
+    };
+    getComments();
+  }, [postId]);
+  const handleLike = async (commentId) => {
+    try {
+      if (!currentUser) {
+        navigate("/sign-in");
+        return;
+      }
+      const res = await fetch(`/api/comment/likeComment/${commentId}`, {
+        method: "PUT",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setComments(
+          comments.map((comment) => 
+            comment._id === commentId
+              ? {
+                  ...comment,
+                  likes: data.likes,
+                  numberOfLikes: data.numberOfLikes, //data.likes.length :  dem so id nguoi like cung duoc
+                }
+              : comment
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error.message);
     }
-    getComments()
-  },[postId])
+  };
   return (
     <div className="max-w-4xl mx-auto w-full p-3">
       {currentUser ? (
@@ -115,9 +141,9 @@ export default function CommentSection({ postId }) {
               <p>{comments.length}</p>
             </div>
           </div>
-          {
-            comments.map(comment=>(<Comment key={comment._id} comment={comment}/>))
-          }
+          {comments.map((comment) => (
+            <Comment key={comment._id} comment={comment} onLike={handleLike} />
+          ))}
         </>
       )}
     </div>
