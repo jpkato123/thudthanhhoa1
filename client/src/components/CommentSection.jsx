@@ -1,7 +1,8 @@
-import { Alert, Button, Textarea } from "flowbite-react";
+import { Alert, Button, Modal, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 import Comment from "./Comment";
 
 export default function CommentSection({ postId }) {
@@ -9,6 +10,9 @@ export default function CommentSection({ postId }) {
   const [comment, setComment] = useState(""); //noi dung tu client de fetch du lieu di
   const [commentError, setCommentError] = useState(null);
   const [comments, setComments] = useState([]); // luu du lieu tu api gui ve
+  const [showModal, setShowModal] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+
   const navigate = useNavigate();
   // console.log(comments);
   // console.log(comment);
@@ -86,6 +90,26 @@ export default function CommentSection({ postId }) {
       })
     );
   };
+  const handleDelete = async (commentToDelete) => {
+    setShowModal(false)
+    try {
+      if (!currentUser) {
+        return navigate("/sing-in");
+      }
+      const res = await fetch(`/api/comment/deleteComment/${commentToDelete}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        const data = await res.json();
+
+        setComments(
+          comments.filter((comment) => comment._id !== commentToDelete)
+        );
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   return (
     <div className="max-w-4xl mx-auto w-full p-3">
       {currentUser ? (
@@ -154,10 +178,43 @@ export default function CommentSection({ postId }) {
               comment={comment}
               onLike={handleLike}
               onEdit={handleEdit}
+              onDelete={(commentId) => {
+                setShowModal(true);
+                setCommentToDelete(commentId);
+              }}
             />
           ))}
         </>
       )}
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size={"md"}
+      >
+        <Modal.Header>Delete Comment </Modal.Header>
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-300">
+              Bạn có muốn xoá comment này không?
+            </h3>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="flex gap-3 mx-auto">
+            <Button
+              color={"failure"}
+              onClick={() => handleDelete(commentToDelete)}
+            >
+              Xoá comment
+            </Button>
+            <Button color={"gray"} onClick={() => setShowModal(false)}>
+              Không Đồng Ý
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
