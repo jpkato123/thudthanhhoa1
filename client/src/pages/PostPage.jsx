@@ -3,13 +3,16 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "flowbite-react";
 import CallToAction from "../components/CallToAction";
 import CommentSection from "../components/CommentSection";
+import PostCard from "../components/PostCard";
 
 export default function PostPage() {
   const { postSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
+  const [recentPosts,setRecentPosts] = useState(null)
     // console.log(post);
+    console.log(recentPosts)
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -32,8 +35,23 @@ export default function PostPage() {
     };
     fetchPost();
   }, [postSlug]);
+  useEffect(()=>{
+    try {
+      const fetchRecentPosts = async ()=>{
+        const res = await fetch(`/api/post/getposts?limit=3`);
+        const data = await res.json()
+        if(res.ok){
+          setRecentPosts(data.posts)
+        }
+
+      }
+      fetchRecentPosts()
+    } catch (error) {
+      console.log(error.message)
+    }
+  },[])
   return (
-    <main className="p-3 flex flex-col max-w-6xl mx-auto min-h-screen">
+    <main className="p-3 flex flex-col max-w-7xl mx-auto min-h-screen">
       <h1 className="text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl">
         {post && post.title}
       </h1>
@@ -54,13 +72,23 @@ export default function PostPage() {
         <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>
         <span className=" italic">{post && (post.content.length / 1000).toFixed(0)} min read</span>
       </div>
-      <div className="p-3 max-w-2xl mx-auto w-full post-content" dangerouslySetInnerHTML={{__html: post && post.content}}>
+      <div className="p-3 max-w-5xl mx-auto w-full post-content" dangerouslySetInnerHTML={{__html: post && post.content}}>
         
       </div>
-      <div className="max-w-4xl mx-auto w-full">
+      <div className="max-w-5xl mx-auto w-full">
         <CallToAction/>
       </div>
       <CommentSection postId={post && post._id} />
+      <div className="flex flex-col justify-center items-center mb-5 max-w-5xl w-full mx-auto">
+        <h1 className="text-xl font-semibold">Reccent Articles</h1>
+        <div className="flex flex-wrap gap-2 mt-5 mx-auto">
+        {
+          recentPosts && (
+            recentPosts.map((post)=> (<PostCard key={post._id} post={post}/>))
+          )
+        }
+        </div>
+      </div>
     </main>
   );
 }

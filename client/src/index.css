@@ -28,3 +28,6 @@
 .dark .post-content a{
     color: red;
 }
+.dark .card-content p span{
+    color: white !important;
+}
