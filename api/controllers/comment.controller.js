@@ -1,5 +1,6 @@
 import { errorHandler } from "../utils/error.js";
 import Comment from "../models/comment.model.js";
+import e from "express";
 
 export const createComment = async (req, res, next) => {
   try {
@@ -51,3 +52,21 @@ export const likeComment = async (req, res, next) => {
     next(error);
   }
 };
+
+export const editComment = async (req,res,next) =>{
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if(!comment) {
+      return next(errorHandler(404,'comment not found'))
+    }
+    if(comment.userId!==req.user.id && !req.user.isAdmin){
+      return next(errorHandler(403,'you are not allowed to edit this comment'))
+    }
+    const editedComment = await Comment.findByIdAndUpdate(req.params.commentId,{
+      content: req.body.content,
+    },{new:true})
+    res.status(200).json(editComment)
+  } catch (error) {
+    next(error)
+  }
+}
