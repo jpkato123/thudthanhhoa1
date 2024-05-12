@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiAnnotation, HiDocumentText, HiUser, HiUserGroup } from "react-icons/hi";
+import { HiAnnotation, HiChartPie, HiDocumentText, HiUser, HiUserGroup } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -34,39 +34,48 @@ export default function DashSidebar() {
           </Link>
           {currentUser.isAdmin && (
             <>
-            <Link to={"/dashboard?tab=posts"}>
-              <Sidebar.Item
-                as="div"
-                active={tab === "posts"}
-                icon={HiDocumentText}
-                className="cursor-pointer"
-              >
-                Posts
-              </Sidebar.Item>
-            </Link>
-            <Link to={"/dashboard?tab=comments"}>
-              <Sidebar.Item
-                as="div"
-                active={tab === "comments"}
-                icon={HiAnnotation}
-                className="cursor-pointer"
-              >
-                Comments
-              </Sidebar.Item>
-            </Link>
-            <Link to={"/dashboard?tab=users"}>
-              <Sidebar.Item
-                as="div"
-                active={tab === "users"}
-                icon={HiUserGroup}
-                className="cursor-pointer"
-              >
-                Users
-              </Sidebar.Item>
-            </Link>
+              <Link to={"/dashboard?tab=dashboard" || !tab}>
+                <Sidebar.Item
+                  as="div"
+                  active={tab === "dashboard"}
+                  icon={HiChartPie}
+                  className="cursor-pointer"
+                >
+                  Dashboard
+                </Sidebar.Item>
+              </Link>
+              <Link to={"/dashboard?tab=posts"}>
+                <Sidebar.Item
+                  as="div"
+                  active={tab === "posts"}
+                  icon={HiDocumentText}
+                  className="cursor-pointer"
+                >
+                  Posts
+                </Sidebar.Item>
+              </Link>
+              <Link to={"/dashboard?tab=comments"}>
+                <Sidebar.Item
+                  as="div"
+                  active={tab === "comments"}
+                  icon={HiAnnotation}
+                  className="cursor-pointer"
+                >
+                  Comments
+                </Sidebar.Item>
+              </Link>
+              <Link to={"/dashboard?tab=users"}>
+                <Sidebar.Item
+                  as="div"
+                  active={tab === "users"}
+                  icon={HiUserGroup}
+                  className="cursor-pointer"
+                >
+                  Users
+                </Sidebar.Item>
+              </Link>
             </>
           )}
-         
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>
