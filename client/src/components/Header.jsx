@@ -5,29 +5,48 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { signoutSuccess } from "../redux/user/userSlice";
-
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 export default function Header() {
   const path = useLocation().pathname;
   // console.log(path);
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const { theme } = useSelector((state) => state.theme);
-const handleSignOut = async () => {
-  try {
-    const res = await fetch("/api/user/signout", {
-      method: "POST",
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      console.log(data.message);
-    } else {
-      dispatch(signoutSuccess());
+  const navigate = useNavigate()
+  const location = useLocation();
+  const [searchTerm, setSearchTerm] = useState("");
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get(searchTerm);// /search?searchTerm=react -->react
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTerm);
     }
-  } catch (error) {
-    console.log(error.message);
-  }
-};
+  }, [location.search]);
 
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+const handleSubmit = (e)=>{
+  e.preventDefault()
+  const urlParams = new URLSearchParams(location.search)
+  urlParams.set('searchTerm',searchTerm)
+  const searchQuery = urlParams.toString()
+  console.log(searchQuery)
+  navigate(`/search?${searchQuery}`)
+}
   return (
     <Navbar fluid rounded className="border-b-2 shadow-sm">
       <Link
@@ -39,13 +58,14 @@ const handleSignOut = async () => {
         </span>
         <span className="sm:text-sm">Thanh Hoá</span>
       </Link>
-      <form>
+      <form onSubmit={handleSubmit}>
         <TextInput
           id="search"
           type="text"
           rightIcon={AiOutlineSearch}
           placeholder="Search..."
           className=" hidden lg:inline"
+          onChange={(e)=>setSearchTerm(e.target.value)}
         />
       </form>
       <Button color={"gray"} pill className="w-10 h-10 lg:hidden">
@@ -73,7 +93,9 @@ const handleSignOut = async () => {
             }
           >
             <Dropdown.Header>
-              <span className="block text-sm truncate" >@{currentUser.username}</span>
+              <span className="block text-sm truncate">
+                @{currentUser.username}
+              </span>
               <span className="block truncate text-sm">
                 {currentUser.email}
               </span>
