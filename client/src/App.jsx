@@ -14,6 +14,7 @@ import UpdatePost from "./pages/UpdatePost";
 import PostPage from "./pages/PostPage";
 import ScrollToTop from "./components/ScrollToTop";
 import Search from "./pages/Search";
+import FacebookMessger from "./components/FacebookMessger";
 export default function App() {
   return (
   <BrowserRouter>
@@ -35,6 +36,7 @@ export default function App() {
       <Route path="/sign-in" element={<SignIn/>}/>
       <Route path="/sign-up" element={<SignUp/>}/>
     </Routes>
+    <FacebookMessger/>
     <Footer/>
   </BrowserRouter>
     )
