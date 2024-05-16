@@ -7,6 +7,7 @@ import commentRoutes from "./routes/comment.route.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from 'path';
+import cors from 'cors'
 
 dotenv.config();
 mongoose
@@ -19,6 +20,7 @@ mongoose
   });
 const __dirname = path.resolve();
 const app = express();
+
 app.use(express.json()); // cho phep hien thi json tren backend terminal
 app.use(cookieParser());
 
@@ -34,6 +36,14 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://threes-itvn.onrender.com");
   next();
 });
+
+app.use(
+  cors({
+    origin: "https://threes-itvn.onrender.com", //アクセス許可するオリジン
+    credentials: true, //レスポンスヘッダーにAccess-Control-Allow-Credentials追加
+    optionsSuccessStatus: 200, //レスポンスstatusを200に設定
+  })
+);
 app.use(express.static(path.join(__dirname,'/client/dist')));
 app.get('*',(req,res)=>{
   res.sendFile(path.join(__dirname,'client','dist','index.html'));
