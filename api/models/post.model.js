@@ -19,6 +19,10 @@ const postSchema = new mongoose.Schema(
       default:
         "https://contentatscale.ai/wp-content/uploads/2023/03/Blog-Post-Images-%E2%80%93-How-to-Elevate-AIO-Content_Header.png",
     },
+    youtubeLink: {
+      type: String,
+      default: "https://www.youtube.com/embed/tvdOnsKsOJg?si=N15OD1-3CNgWv71v",
+    },
     category: {
       type: String,
       default: "uncategorized",

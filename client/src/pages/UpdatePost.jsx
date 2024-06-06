@@ -28,7 +28,8 @@ export default function UpdatePost() {
   const navigate = useNavigate();
   const { postId } = useParams();
   const { currentUser } = useSelector((state) => state.user);
-  // console.log(formData)
+  const [categories, setCategories] = useState([]);
+  // console.log(formData.category)
   useEffect(() => {
     try {
       const getEditPost = async () => {
@@ -38,7 +39,8 @@ export default function UpdatePost() {
           console.log(data.message);
           setPublishError(data.message);
           return;
-        } else {
+        }
+        if (res.ok) {
           setFormData(data.posts[0]);
           setPublishError(null);
         }
@@ -48,6 +50,27 @@ export default function UpdatePost() {
       console.log(error);
     }
   }, [postId]);
+
+  useEffect(() => {
+    const fetchGetCategory = async () => {
+      try {
+        const res = await fetch("/api/category/getCategories", {
+          method: "GET",
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setPublishError(data.message);
+          return;
+        }
+        if (res.ok) {
+          setCategories(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchGetCategory();
+  }, []);
 
   const handleUploadImage = async () => {
     try {
@@ -124,14 +147,16 @@ export default function UpdatePost() {
           />
           <Select
             onChange={(e) =>
-              setFormData({ ...formData, category: e.target.value })
+              setFormData({ ...formData, category: e.target.value.trim() })
             }
-            value={formData.category}
+            value={formData.cagtegory}
           >
-            <option value={"uncategorized"}>Select a category</option>
-            <option value="javascript">JavaScript</option>
-            <option value="reactjs">React.js</option>
-            <option value="nextjs">Next.js</option>
+            <option value="uncategorized">Select a category</option>
+            {categories.map((c, index) => (
+              <option key={index} value={c.category}>
+                {c.category}
+              </option>
+            ))}
           </Select>
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-steal-500 border-dotted p-3">
@@ -164,7 +189,7 @@ export default function UpdatePost() {
         {imageUploadError && (
           <Alert color={"failure"}>{imageUploadError}</Alert>
         )}
-        {formData.image && (
+        {formData && (
           <img
             src={formData.image}
             alt="image upload"

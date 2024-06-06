@@ -15,6 +15,7 @@ export default function Header() {
   const { theme } = useSelector((state) => state.theme);
   const navigate = useNavigate()
   const location = useLocation();
+  console.log(location)
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -42,9 +43,10 @@ export default function Header() {
 const handleSubmit = (e)=>{
   e.preventDefault()
   const urlParams = new URLSearchParams(location.search)
+  // console.log(urlParams)
   urlParams.set('searchTerm',searchTerm)
   const searchQuery = urlParams.toString()
-  console.log(searchQuery)
+  // console.log(searchQuery)
   navigate(`/search?${searchQuery}`)
 }
   return (

@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 import bcryptjs from "bcryptjs";
+
 export const test = (req, res) => {
   res.status(200).json({ message: "test api working " });
 };
@@ -43,6 +44,9 @@ export const updateUser = async (req, res, next) => {
           email: req.body.email,
           profilePicture: req.body.profilePicture,
           password: req.body.password,
+          phoneNumber: req.body.phoneNumber,
+          address: req.body.address,
+          birthday: req.body.birthday,
         },
       },
       { new: true } //send back new info
@@ -111,15 +115,15 @@ export const getUsers = async (req, res, next) => {
     next(error);
   }
 };
-export const getUser =async (req,res,next) => {
+export const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId);
-    if(!user) {
-      return next(errorHandler(404,'User not found'))
+    if (!user) {
+      return next(errorHandler(404, "User not found"));
     }
-    const {password,...rest} = user._doc;
-    res.status(200).json(rest)
+    const { password, ...rest } = user._doc;
+    res.status(200).json(rest);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};

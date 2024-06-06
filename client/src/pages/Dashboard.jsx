@@ -27,13 +27,13 @@ export default function Dashboard() {
       {/* profile */}
       {tab === "profile" && <DashProfile />}
       {/* post */}
-      {tab==='posts' && <DashPost/>}
+      {tab === "posts" && <DashPost />}
       {/* users */}
-      {tab==='users' && <DashUsers/>}
+      {tab === "users" && <DashUsers />}
       {/* comments */}
-      {tab==='comments' && <DashComments/>}
+      {tab === "comments" && <DashComments />}
       {/* dashboard */}
-      {tab==='dashboard' && <DashboardComp/>}
+      {tab === "dashboard" && <DashboardComp />}
     </div>
   );
 }

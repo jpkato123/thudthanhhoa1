@@ -4,6 +4,10 @@ import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
 import postRoutes from "./routes/post.route.js";
 import commentRoutes from "./routes/comment.route.js";
+import categoryRoutes from "./routes/category.route.js";
+import courseRoutes from "./routes/course.route.js";
+import lessionRoutes from "./routes/lession.route.js";
+import paymentRoutes from "./routes/payment.route.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from 'path';
@@ -32,6 +36,11 @@ app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
+app.use("/api/category",categoryRoutes);
+app.use("/api/course",courseRoutes);
+app.use("/api/lession",lessionRoutes);
+app.use("/api/payment",paymentRoutes);
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://threes-itvn.onrender.com");
   next();

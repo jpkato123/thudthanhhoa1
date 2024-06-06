@@ -18,7 +18,8 @@ import {
   signoutSuccess,
 } from "../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
-import {HiOutlineExclamationCircle} from 'react-icons/hi'
+import {HiOutlineExclamationCircle,HiMail} from 'react-icons/hi'
+import { FaAddressCard, FaBirthdayCake, FaLock, FaPhone, FaUser} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
 
 export default function DashProfile() {
@@ -35,6 +36,8 @@ export default function DashProfile() {
   const [updateUserError, setUpdateUserError] = useState(null);
   const [showModal,setShowModel] = useState(false)
   //   console.log(imageFileUploadProgress,imageFileUploadError)
+  // console.log(new Date(currentUser.birthday).toISOString().split("T")[0]);
+  // console.log(formData)
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -195,12 +198,14 @@ export default function DashProfile() {
           type="text"
           id="username"
           placeholder="Username"
+          icon={FaUser}
           defaultValue={currentUser.username}
           onChange={handleChange}
         />
         <TextInput
           type="email"
           id="email"
+          icon={HiMail}
           placeholder="Email"
           defaultValue={currentUser.email}
           onChange={handleChange}
@@ -208,21 +213,57 @@ export default function DashProfile() {
         <TextInput
           type="password"
           id="password"
-          placeholder="passowrd"
+          icon={FaLock}
+          placeholder="password"
           onChange={handleChange}
         />
-        <Button type="submit" gradientDuoTone={"purpleToBlue"} outline disabled={loading || imageFileUploading} isProcessing={loading}>
-          {loading ? 'Loading' : 'Update'}
+        <TextInput
+          type="text"
+          id="phoneNumber"
+          icon={FaPhone}
+          defaultValue={currentUser.phoneNumber}
+          placeholder="090123456789"
+          onChange={handleChange}
+        />
+        <TextInput
+          type="text"
+          id="address"
+          defaultValue={currentUser.address}
+          icon={FaAddressCard}
+          placeholder="address..."
+          onChange={handleChange}
+        />
+        <TextInput
+          type="date"
+          id="birthday"
+          placeholder="Birthday..."
+          icon={FaBirthdayCake}
+          defaultValue={
+            new Date(currentUser.birthday).toISOString().split("T")[0]
+          }
+          onChange={handleChange}
+        />
+        <Button
+          type="submit"
+          gradientDuoTone={"purpleToBlue"}
+          outline
+          disabled={loading || imageFileUploading}
+          isProcessing={loading}
+        >
+          {loading ? "Loading" : "Update"}
         </Button>
-        {
-          currentUser.isAdmin && (
-            <Link to={'/create-post'}>
-              <Button type="button" gradientDuoTone={'purpleToPink'} className="w-full" outline>
-                Create Post
-              </Button>
-            </Link>
-          )
-        }
+        {currentUser.isAdmin && (
+          <Link to={"/create-post"}>
+            <Button
+              type="button"
+              gradientDuoTone={"purpleToPink"}
+              className="w-full"
+              outline
+            >
+              Create Post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className=" text-red-700 flex justify-between mt-5">
         <span
@@ -231,7 +272,10 @@ export default function DashProfile() {
         >
           Delete Account
         </span>
-        <span onClick={handleSignOut} className=" cursor-pointer text-sm hover:underline">
+        <span
+          onClick={handleSignOut}
+          className=" cursor-pointer text-sm hover:underline"
+        >
           Sign out
         </span>
       </div>

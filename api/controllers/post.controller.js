@@ -87,6 +87,7 @@ export const updatePost = async (req, res, next) => {
         content: req.body.content,
         category: req.body.category,
         image: req.body.image,
+        youtubeLink: req.body.youtubeLink
       }
     },{new:true});
     res.status(200).json(updatedPost);

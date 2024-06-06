@@ -1,8 +1,8 @@
 import { Button, Select, TextInput } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import PostCard from '../components/PostCard'
+import PostCard from "../components/PostCard";
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
     searchTerm: "",
@@ -14,9 +14,11 @@ export default function Search() {
   const [showMore, setShowMore] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  //   console.log(location)
-//   console.log(sidebarData);
-// console.log(posts)
+  const [categories, setCategories] = useState([]);
+  const searchTermRef = useRef(null);
+  // console.log(location);
+  // console.log(sidebarData);
+  console.log(posts);
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get("searchTerm");
@@ -51,11 +53,31 @@ export default function Search() {
     };
     fetchPosts();
   }, [location.search]);
+  useEffect(() => {
+    const fetchGetCategory = async () => {
+      try {
+        const res = await fetch("/api/category/getCategories", {
+          method: "GET",
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          return;
+        }
+        if (res.ok) {
+          setCategories(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchGetCategory();
+  }, []);
   const handleChange = (e) => {
     if (e.target.id === "searchTerm") {
+      const searchTermValue = e.target.value;
       setSidebarData({
         ...sidebarData,
-        searchTerm: e.target.value,
+        searchTerm: searchTermValue,
       });
     }
     if (e.target.id === "sort") {
@@ -76,32 +98,39 @@ export default function Search() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const urlParams = new URLSearchParams(location.search);
-    urlParams.set("searchTerm", sidebarData.searchTerm);
+    // console.log(urlParams)
+    urlParams.set(
+      "searchTerm",
+      sidebarData.searchTerm === ""
+        ? document.getElementById("searchTerm").value
+        : sidebarData.searchTerm
+    );
     urlParams.set("sort", sidebarData.sort);
     urlParams.set("category", sidebarData.category);
     const searchQuery = urlParams.toString();
+    // console.log(searchQuery)
     navigate(`/search?${searchQuery}`);
   };
-  const handleShowMore =async ()=>{
-    const numberOfPosts = posts.length();
+  const handleShowMore = async () => {
+    const numberOfPosts = posts.length;
     const startIndex = numberOfPosts;
-    const urlParams = new URLSearchParams(location.search)
-    urlParams.set('startIndex',startIndex)
-    const searchQuery = urlParams.toString()
-    const res = await fetch(`/api/post/getposts?${searchQuery}`)
-    if(!res.ok){
-        return
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/post/getposts?${searchQuery}`);
+    if (!res.ok) {
+      return;
     }
-    if(res.ok){
-        const data = await res.json()
-        setPosts({...posts,...data.posts})
-        if(data.posts.length === 9){
-            setShowMore(true)
-        }else{
-            setShowMore(false)
-        }
+    if (res.ok) {
+      const data = await res.json();
+      setPosts([ ...posts, ...data.posts ]);
+      if (data.posts.length === 9) {
+        setShowMore(true);
+      } else {
+        setShowMore(false);
+      }
     }
-  }
+  };
   return (
     <div className="flex flex-col md:flex-row">
       <div className="p-7 border-b md:border-r md:min-h-screen border-gray-500">
@@ -114,25 +143,28 @@ export default function Search() {
               type="text"
               placeholder="Search..."
               id="searchTerm"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e)}
+              ref={searchTermRef}
             />
           </div>
           <div className="flex items-center gap-2">
             <label className=" whitespace-normal font-semibold">Category</label>
-            <Select
-              onChange={handleChange}
-              value={sidebarData.category}
-              id="category"
-            >
+            <Select onChange={(e) => handleChange(e)} id="category">
               <option value="">Uncategorized</option>
-              <option value="reactjs">React.js</option>
-              <option value="nextjs">Next.js</option>
-              <option value="javascript">Javascript</option>
+              {categories.map((c, index) => (
+                <option key={index} value={c.category}>
+                  {c.category}
+                </option>
+              ))}
             </Select>
           </div>
           <div className="flex items-center gap-2">
             <label className=" whitespace-normal font-semibold">Sort</label>
-            <Select onChange={handleChange} value={sidebarData.sort} id="sort">
+            <Select
+              onChange={(e) => handleChange(e)}
+              value={sidebarData.sort}
+              id="sort"
+            >
               <option value="desc">Lastest</option>
               <option value="asc">Oldest</option>
             </Select>
